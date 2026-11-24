@@ -1,0 +1,4 @@
+# Format: NUME|CUVINTE_CHEIE|PRAG_INCIDENTE|SCOR_MINIM|ACTIVA|FEREASTRA_SECUNDE
+BRUTE_FORCE|failed,denied,unauthorized|5|50|1|60
+ERROR_SPIKE|error,exception,timeout|3|50|1|120
+SUSPICIOUS_PAYLOAD|../,/etc/passwd,drop table,union select,<script,cmd=|1|60|1|0

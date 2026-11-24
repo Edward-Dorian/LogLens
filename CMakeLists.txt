@@ -69,8 +69,14 @@ add_executable(${MAIN_EXECUTABLE_NAME}
 )
 target_sources(${MAIN_LIBRARY_NAME}
     PRIVATE
-        src/Example.cpp
-        src/internal/Detail.cpp
+        src/internal/TextUtils.cpp
+        src/TimestampLog.cpp
+        src/EvenimentSecuritate.cpp
+        src/AlertaSecuritate.cpp
+        src/RegulaDetectie.cpp
+        src/ProfilIP.cpp
+        src/RaportSecuritate.cpp
+        src/MotorLogLens.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )

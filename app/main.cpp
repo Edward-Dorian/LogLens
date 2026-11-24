@@ -1,54 +1,64 @@
 #include <iostream>
-#include <array>
-#include "Example.h"
+#include <vector>
+
+#include "EvenimentSecuritate.h"
+#include "MotorLogLens.h"
+#include "ProfilIP.h"
+#include "RaportSecuritate.h"
+#include "RegulaDetectie.h"
 
 int main() {
-    std::cout << "Hello, world!\n";
-    Example e1;
-    e1.add(3);
-    e1.g();
-    std::array<int, 100> v{};
-    int nr;
-    std::cout << "Introduceți nr: ";
-    /////////////////////////////////////////////////////////////////////////
-    /// Observație: dacă aveți nevoie să citiți date de intrare de la tastatură,
-    /// dați exemple de date de intrare folosind fișierul tastatura.txt
-    /// Trebuie să aveți în fișierul tastatura.txt suficiente date de intrare
-    /// (în formatul impus de voi) astfel încât execuția programului să se încheie.
-    /// De asemenea, trebuie să adăugați în acest fișier date de intrare
-    /// pentru cât mai multe ramuri de execuție.
-    /// Dorim să facem acest lucru pentru a automatiza testarea codului, fără să
-    /// mai pierdem timp de fiecare dată să introducem de la zero aceleași date de intrare.
-    ///
-    /// Pe GitHub Actions (bife), fișierul tastatura.txt este folosit
-    /// pentru a simula date introduse de la tastatură.
-    /// Bifele verifică dacă programul are erori de compilare, erori de memorie și memory leaks.
-    ///
-    /// Dacă nu puneți în tastatura.txt suficiente date de intrare, îmi rezerv dreptul să vă
-    /// testez codul cu ce date de intrare am chef și să nu pun notă dacă găsesc vreun bug.
-    /// Impun această cerință ca să învățați să faceți un demo și să arătați părțile din
-    /// program care merg (și să le evitați pe cele care nu merg).
-    ///
-    /////////////////////////////////////////////////////////////////////////
-    std::cin >> nr;
-    /////////////////////////////////////////////////////////////////////////
-    for(int i = 0; i < nr; ++i) {
-        std::cout << "v[" << i << "] = ";
-        std::cin >> v[i];
+    MotorLogLens motor{"prod-eu-central-01"};
+
+    const int reguliIncarcate = motor.incarcaReguliDinFisier("assets/reguli.txt");
+    const int liniiIncarcate = motor.incarcaLogDinFisier("assets/server_logs.txt");
+    if (reguliIncarcate == 0 || liniiIncarcate == 0) {
+        std::cerr << "Eroare: nu s-au putut incarca regulile sau fisierul de log.\n";
+        return 1;
     }
-    std::cout << "\n\n";
-    std::cout << "Am citit de la tastatură " << nr << " elemente:\n";
-    for(int i = 0; i < nr; ++i) {
-        std::cout << "- " << v[i] << "\n";
+
+    motor.analizeazaAmenintari();
+    std::cout << motor << "\n";
+
+    const RaportSecuritate raport = motor.genereazaRaportSecuritate();
+    std::cout << raport << "\n";
+
+    std::cout << "=== Profiluri IP cu activitate suspecta/malitioasa ===\n";
+    for (const ProfilIP& profil : motor.construiesteProfiluriIP()) {
+        if (profil.determinaReputatie() != NivelReputatie::Curat) {
+            std::cout << "  " << profil << "\n";
+        }
     }
-    ///////////////////////////////////////////////////////////////////////////
-    /// Pentru date citite din fișier, NU folosiți tastatura.txt. Creați-vă voi
-    /// alt fișier propriu cu ce alt nume doriți.
-    /// Exemplu:
-    /// std::ifstream fis("date.txt");
-    /// for(int i = 0; i < nr2; ++i)
-    ///     fis >> v2[i];
-    ///
-    ///////////////////////////////////////////////////////////////////////////
+
+    std::cout << "\n=== Investigatie IP atacator (185.220.101.44) ===\n";
+    for (const EvenimentSecuritate& ev : motor.extrageEvenimentePerIP("185.220.101.44")) {
+        std::cout << "  " << ev << "\n";
+    }
+
+    std::cout << "\n=== Export JSON complet SecurityFlow ===\n"
+              << raport.formateazaJsonComplet() << "\n\n";
+
+    // Simulare what-if pe o copie a motorului cu o regula stricta pe fereastra scurta (30s).
+    MotorLogLens simulareStricta{motor};
+    simulareStricta.adaugaRegula(
+        RegulaDetectie{"SENSITIVE_ACCOUNT_AUDIT", "admin,root,backup", 2, 40, true, 30});
+    simulareStricta.analizeazaAmenintari();
+
+    std::cout << "=== Comparatie productie vs. simulare what-if (fereastra 30s) ===\n"
+              << "  Productie -> Alerte: " << motor.getAlerte().size()
+              << " | Sanatate: " << motor.calculeazaScorSanatateServer() << "%\n"
+              << "  Simulare  -> Alerte: " << simulareStricta.getAlerte().size()
+              << " | Sanatate: " << simulareStricta.calculeazaScorSanatateServer() << "%\n"
+              << "  Simularea a modificat starea fata de productie: "
+              << (simulareStricta != motor ? "DA" : "NU") << "\n\n";
+
+    // Pastrarea unui snapshot independent prin operator= pentru audit ulterior.
+    MotorLogLens snapshotAudit{"audit-backup-01"};
+    snapshotAudit = motor;
+    std::cout << "Snapshot audit sincronizat cu productia: "
+              << (snapshotAudit == motor ? "DA" : "NU")
+              << " (Alerte: " << snapshotAudit.getAlerte().size()
+              << " | Sanatate: " << snapshotAudit.calculeazaScorSanatateServer() << "%)\n";
+
     return 0;
 }

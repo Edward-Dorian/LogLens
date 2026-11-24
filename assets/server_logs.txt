@@ -1,0 +1,30 @@
+# Format: TIMESTAMP|IP|SERVICIU|COD_STATUS|MESAJ
+2026-03-14 08:01:12|10.0.0.12|web|200|GET /index.html served successfully
+2026-03-14 08:01:45|10.0.0.15|auth|200|User alice authenticated successfully
+2026-03-14 08:02:10|192.168.1.24|api|200|GET /api/v1/health status OK
+2026-03-14 08:03:04|185.220.101.44|auth|401|Failed login attempt for user admin
+2026-03-14 08:03:09|185.220.101.44|auth|401|Failed login attempt for user root
+2026-03-14 08:03:15|185.220.101.44|ssh|403|Access denied: invalid password for root
+2026-03-14 08:03:21|185.220.101.44|auth|401|Failed login attempt for user admin
+2026-03-14 08:03:28|185.220.101.44|ssh|403|Access denied: invalid password for deploy
+2026-03-14 08:03:35|185.220.101.44|auth|401|Unauthorized login attempt for user backup
+2026-03-14 08:03:42|185.220.101.44|auth|401|Failed login attempt for user admin
+2026-03-14 08:04:11|172.16.0.8|web|200|GET /assets/app.js served from cache
+2026-03-14 08:04:33|192.168.1.24|web|404|Resource /favicon.ico not found
+2026-03-14 08:05:02|10.0.0.12|db|200|Query SELECT orders completed in 14ms
+2026-03-14 08:06:18|10.0.5.77|payments|500|Internal server error: payment gateway exception
+2026-03-14 08:06:24|10.0.5.77|payments|500|Internal server error: transaction rollback exception
+2026-03-14 08:06:31|10.0.5.77|api|503|Upstream gateway timeout while reaching billing
+2026-03-14 08:06:40|10.0.5.77|payments|500|Unhandled exception in checkout worker
+2026-03-14 08:07:05|10.0.0.15|api|200|POST /api/v1/sessions refreshed token
+2026-03-14 08:08:19|45.133.1.92|web|403|Blocked request GET /download?file=../../etc/passwd
+2026-03-14 08:09:02|172.16.0.8|web|200|GET /dashboard loaded in 42ms
+2026-03-14 08:09:44|91.240.118.17|api|400|Malformed SQL query: '; DROP TABLE users; --
+2026-03-14 08:10:15|10.0.0.12|api|200|GET /api/v1/metrics exported
+2026-03-14 08:11:00|192.168.1.24|web|200|GET /status OK
+2026-03-14 09:05:00|203.0.113.55|auth|401|Failed login attempt for user bob
+2026-03-14 10:20:00|203.0.113.55|ssh|403|Access denied: invalid password for bob
+2026-03-14 11:45:00|203.0.113.55|api|401|Unauthorized token refresh for user bob
+2026-03-14 13:10:00|203.0.113.55|auth|401|Failed login attempt for user bob
+2026-03-14 14:30:00|203.0.113.55|auth|401|Failed login attempt for user bob
+2026-03-14 15:55:00|203.0.113.55|auth|401|Failed login attempt for user bob
